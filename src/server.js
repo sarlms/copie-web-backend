@@ -4,7 +4,6 @@ const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const socketIo = require('socket.io');
-const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/usersRoutes');
 const photoRoutes = require('./routes/photosRoutes');
 const pelliculeRoutes = require('./routes/pelliculesRoutes');
@@ -29,7 +28,6 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(cookieParser()); // Ajout du middleware cookie-parser
 
 // Routes
 app.use('/api/user', userRoutes);
