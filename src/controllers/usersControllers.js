@@ -29,6 +29,7 @@ exports.getUser = async (req, res) => {
 
     // Retournez les données du profil utilisateur
     res.status(200).json({
+      id: id,
       pseudo: user.pseudo,
       email: user.email,
       prenom: user.prenom,
