@@ -20,4 +20,7 @@ router.delete('/:id', photoController.deletePhoto);
 // Route pour récupérer les photos par pelliculeId
 router.get('/pellicule/:pelliculeId', photoController.getPhotosByPellicule);
 
+// Route pour récupérer les photos par userId
+router.get('/user/:userId', photoController.getPhotosByUser);
+
 module.exports = router;

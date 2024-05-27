@@ -98,3 +98,21 @@ exports.getPhotosByPellicule = async (req, res) => {
         res.status(500).json({ message: 'Error fetching photos', error });
     }
 };
+
+
+// Contrôleur pour récupérer toutes les photos postées par un utilisateur spécifique
+exports.getPhotosByUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const photos = await Photo.find({ userId }).lean();
+
+        for (const photo of photos) {
+            photo.likesCount = await Like.countDocuments({ photoId: photo._id });
+            photo.commentsCount = await Commentaire.countDocuments({ photoId: photo._id });
+        }
+
+        res.status(200).json(photos);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching photos', error });
+    }
+};
