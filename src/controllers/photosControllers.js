@@ -5,6 +5,7 @@ const Commentaire = require('../models/commentaires'); // Assurez-vous d'importe
 // Contrôleur pour la création d'une nouvelle photo
 exports.createPhoto = async (req, res) => {
     try {
+        console.log('Creating photo with data:', req.body); // Log les données de la requête
         const nouvellePhoto = new Photo({
             ...req.body,
             createdAt: new Date()
@@ -12,12 +13,16 @@ exports.createPhoto = async (req, res) => {
         
         await nouvellePhoto.save();
         
+        // Émission de l'événement WebSocket
+        const io = req.app.get('io');
+        io.emit('photoCreated', nouvellePhoto);
+        
         res.status(201).json(nouvellePhoto);
     } catch (error) {
+        console.error('Error creating photo:', error); // Log l'erreur
         res.status(500).json({ message: error.message });
     }
 };
-
 // Contrôleur pour la récupération de toutes les photos
 exports.getAllPhotos = async (req, res) => {
     try {
@@ -76,8 +81,12 @@ exports.deletePhoto = async (req, res) => {
             return res.status(404).json({ message: "Photo not found" });
         }
         
+        const io = req.app.get('io');
+        io.emit('photoDeleted', req.params.id);
+        
         res.status(200).json({ message: "Photo deleted successfully" });
     } catch (error) {
+        console.error('Error deleting photo:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -100,11 +109,10 @@ exports.getPhotosByPellicule = async (req, res) => {
 };
 
 
-// Contrôleur pour récupérer toutes les photos postées par un utilisateur spécifique
 exports.getPhotosByUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const photos = await Photo.find({ userId }).lean();
+        const photos = await Photo.find({ userId }).sort({ datePublication: -1 }).lean();
 
         for (const photo of photos) {
             photo.likesCount = await Like.countDocuments({ photoId: photo._id });

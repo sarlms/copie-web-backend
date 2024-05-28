@@ -29,6 +29,9 @@ app.use(cors({
 
 app.use(express.json());
 
+// Ajout du WebSocket à l'application Express
+app.set('io', io);
+
 // Routes
 app.use('/api/user', userRoutes);
 app.use('/api/photo', photoRoutes);
@@ -38,31 +41,13 @@ app.use('/api/like', likeRoutes);
 
 // Gestion des connexions Socket.io
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  //console.log('New client connected');
 
   socket.on('createPhoto', (photo) => {
     io.emit('photoCreated', photo);
   });
 
-  socket.on('deleteDiscussion', (photoId) => {
-    io.emit('discussionDeleted', photoId);
-  });
-
-  socket.on('createCommentaire', (commentaire) => {
-    io.emit('commentaireCreated', commentaire);
-  });
-
-  socket.on('deleteCommentaire', (commentaireId) => {
-    io.emit('commentaireDeleted', commentaireId);
-  });
-
-  socket.on('likeMessage', (likeInfo) => {
-    io.emit('messageLiked', likeInfo);
-  });
-
-  socket.on('unlikeMessage', (likeInfo) => {
-    io.emit('messageUnliked', likeInfo);
-  });
+  // Autres événements...
 
   socket.on('disconnect', () => {
     console.log('Client disconnected');
@@ -79,3 +64,26 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => {
     console.error('Could not connect to MongoDB...', err);
   });
+
+  io.on('connection', (socket) => {
+    socket.on('createPhoto', (photo) => {
+      io.emit('photoCreated', photo);
+    });
+  
+    socket.on('likeAdded', (like) => {
+      io.emit('likeAdded', like);
+    });
+  
+    socket.on('likeRemoved', (like) => {
+      io.emit('likeRemoved', like);
+    });
+  
+    socket.on('commentAdded', (comment) => {
+      io.emit('commentAdded', comment);
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
+    });
+  });
+  

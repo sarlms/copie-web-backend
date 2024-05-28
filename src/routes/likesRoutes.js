@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const likesController = require('../controllers//likesControllers');
+const likesController = require('../controllers/likesControllers');
 
 // Route pour la création d'un nouveau like
 router.post('/create', likesController.createLike);
@@ -9,6 +9,9 @@ router.post('/create', likesController.createLike);
 router.get('/', likesController.getAllLikes);
 
 // Route pour la suppression d'un like
-router.delete('/:id', likesController.deleteLike);
+router.delete('/', likesController.deleteLike); // Modifiez cette ligne
+
+// Route pour récupérer les likes d'un utilisateur
+router.get('/user/:userId', likesController.getUserLikes);
 
 module.exports = router;

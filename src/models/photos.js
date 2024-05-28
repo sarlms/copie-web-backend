@@ -13,7 +13,7 @@ const photoSCHEMA = new mongoose.Schema({
 
 photoSCHEMA.pre('save', async function(next) {
     try {
-        const user = await User.findById(this.userId);
+        const user = await mongoose.model('User').findById(this.userId);
         if (user) {
             this.userPseudo = user.pseudo;
         }

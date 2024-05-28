@@ -1,54 +1,37 @@
 const Commentaire = require('../models/commentaires');
+const User = require('../models/users'); // Importer le modèle User
 
-// Contrôleur pour la création d'un nouveau commentaire
 exports.createCommentaire = async (req, res) => {
-    try {
-        // Créer une nouvelle instance de commentaire avec les données du corps de la requête
-        const nouveauCommentaire = new Commentaire(req.body);
-        
-        // Sauvegarder le nouveau commentaire dans la base de données
-        await nouveauCommentaire.save();
-        
-        // Répondre avec le commentaire créé
-        res.status(201).json(nouveauCommentaire);
-    } catch (error) {
-        // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const nouveauCommentaire = new Commentaire(req.body);
+    await nouveauCommentaire.save();
+    const commentWithUser = await Commentaire.findById(nouveauCommentaire._id).populate('userId', 'pseudo');
+    res.status(201).json(commentWithUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Contrôleur pour la récupération de tous les commentaires
 exports.getAllCommentaires = async (req, res) => {
-    try {
-        // Récupérer tous les commentaires depuis la base de données
-        const commentaires = await Commentaire.find();
-        
-        // Répondre avec la liste des commentaires
-        res.status(200).json(commentaires);
-    } catch (error) {
-        // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const commentaires = await Commentaire.find().populate('userId', 'pseudo');
+    res.status(200).json(commentaires);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Contrôleur pour la récupération d'un commentaire par son identifiant
 exports.getCommentaireById = async (req, res) => {
     try {
-        // Récupérer le commentaire avec l'identifiant spécifié depuis la base de données
-        const commentaire = await Commentaire.findById(req.params.id);
-        
-        // Vérifier si le commentaire existe
-        if (!commentaire) {
-            return res.status(404).json({ message: "Commentaire not found" });
-        }
-        
-        // Répondre avec le commentaire récupéré
-        res.status(200).json(commentaire);
+      const commentaire = await Commentaire.findById(req.params.id).populate('userId', 'pseudo');
+      if (!commentaire) {
+        return res.status(404).json({ message: 'Commentaire not found' });
+      }
+      res.status(200).json(commentaire);
     } catch (error) {
-        // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
+  };
 
 // Contrôleur pour la mise à jour des informations d'un commentaire
 exports.updateCommentaire = async (req, res) => {
@@ -82,6 +65,20 @@ exports.deleteCommentaire = async (req, res) => {
         
         // Répondre avec un message de succès
         res.status(200).json({ message: "Commentaire deleted successfully" });
+    } catch (error) {
+        // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Contrôleur pour la récupération de tous les commentaires d'une photo
+exports.getCommentairesByPhotoId = async (req, res) => {
+    try {
+        const { photoId } = req.params;
+        const commentaires = await Commentaire.find({ photoId }).populate('userId', 'pseudo');
+
+        // Répondre avec la liste des commentaires
+        res.status(200).json(commentaires);
     } catch (error) {
         // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
         res.status(500).json({ message: error.message });

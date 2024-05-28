@@ -17,4 +17,7 @@ router.put('/:id', commentairesController.updateCommentaire);
 // Route pour la suppression d'un commentaire
 router.delete('/:id', commentairesController.deleteCommentaire);
 
+// Route pour la récupération de tous les commentaires d'une photo
+router.get('/:photoId/comments', commentairesController.getCommentairesByPhotoId);
+
 module.exports = router;
