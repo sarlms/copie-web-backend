@@ -14,7 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:3001', 'https://sarargentique.cluster-ig3.igpolytech.fr', 'http://localhost:3000'],
+    origin: ['http://localhost:3001', 'https://sarargentique.cluster-ig3.igpolytech.fr', 'http://localhost:3000', 'https://sarargentique2.cluster-ig3.igpolytech.fr'],
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -22,7 +22,7 @@ const io = socketIo(server, {
 
 // Configuration CORS pour Express
 app.use(cors({
-  origin: ['http://localhost:3001', 'https://sarargentique.cluster-ig3.igpolytech.fr', 'http://localhost:3000'],
+  origin: ['http://localhost:3001', 'https://sarargentique.cluster-ig3.igpolytech.fr', 'http://localhost:3000', 'https://sarargentique2.cluster-ig3.igpolytech.fr'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
