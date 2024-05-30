@@ -26,8 +26,8 @@ exports.createPhoto = async (req, res) => {
 // Contrôleur pour la récupération de toutes les photos
 exports.getAllPhotos = async (req, res) => {
     try {
-        const photos = await Photo.find();
-        
+        const photos = await Photo.find().populate('userId', 'pseudo').populate('pelliculeId', 'nom');
+
         for (const photo of photos) {
             photo.likesCount = await Like.countDocuments({ photoId: photo._id });
             photo.commentsCount = await Commentaire.countDocuments({ photoId: photo._id });
@@ -42,7 +42,9 @@ exports.getAllPhotos = async (req, res) => {
 // Contrôleur pour la récupération d'une photo par son identifiant
 exports.getPhotoById = async (req, res) => {
     try {
-        const photo = await Photo.findById(req.params.id);
+        const photo = await Photo.findById(req.params.id)
+                                 .populate('userId', 'pseudo') // Peupler userId avec pseudo
+                                 .populate('pelliculeId', 'nom'); // Peupler pelliculeId avec nom
         
         if (!photo) {
             return res.status(404).json({ message: "Photo not found" });

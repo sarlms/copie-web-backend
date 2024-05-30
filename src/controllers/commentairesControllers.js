@@ -6,7 +6,29 @@ exports.createCommentaire = async (req, res) => {
     const nouveauCommentaire = new Commentaire(req.body);
     await nouveauCommentaire.save();
     const commentWithUser = await Commentaire.findById(nouveauCommentaire._id).populate('userId', 'pseudo');
+
+    // Emettre l'événement WebSocket
+    req.app.get('io').emit('commentAdded', commentWithUser);
+
     res.status(201).json(commentWithUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Les autres méthodes de contrôleur...
+
+exports.deleteCommentaire = async (req, res) => {
+  try {
+    const commentaire = await Commentaire.findByIdAndDelete(req.params.id);
+    if (!commentaire) {
+      return res.status(404).json({ message: "Commentaire not found" });
+    }
+
+    // Emettre l'événement WebSocket
+    req.app.get('io').emit('commentDeleted', { _id: req.params.id });
+
+    res.status(200).json({ message: "Commentaire deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -46,25 +68,6 @@ exports.updateCommentaire = async (req, res) => {
         
         // Répondre avec le commentaire mis à jour
         res.status(200).json(commentaire);
-    } catch (error) {
-        // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Contrôleur pour la suppression d'un commentaire
-exports.deleteCommentaire = async (req, res) => {
-    try {
-        // Supprimer le commentaire avec l'identifiant spécifié depuis la base de données
-        const commentaire = await Commentaire.findByIdAndDelete(req.params.id);
-        
-        // Vérifier si le commentaire existe
-        if (!commentaire) {
-            return res.status(404).json({ message: "Commentaire not found" });
-        }
-        
-        // Répondre avec un message de succès
-        res.status(200).json({ message: "Commentaire deleted successfully" });
     } catch (error) {
         // En cas d'erreur, répondre avec un message d'erreur et un code d'erreur appropriés
         res.status(500).json({ message: error.message });

@@ -41,13 +41,27 @@ app.use('/api/like', likeRoutes);
 
 // Gestion des connexions Socket.io
 io.on('connection', (socket) => {
-  //console.log('New client connected');
+  console.log('New client connected');
 
   socket.on('createPhoto', (photo) => {
     io.emit('photoCreated', photo);
   });
 
-  // Autres événements...
+  socket.on('likeAdded', (like) => {
+    io.emit('likeAdded', like);
+  });
+
+  socket.on('likeRemoved', (like) => {
+    io.emit('likeRemoved', like);
+  });
+
+  socket.on('commentAdded', (comment) => {
+    io.emit('commentAdded', comment);
+  });
+
+  socket.on('commentDeleted', (comment) => {
+    io.emit('commentDeleted', comment);
+  });
 
   socket.on('disconnect', () => {
     console.log('Client disconnected');
@@ -64,26 +78,3 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => {
     console.error('Could not connect to MongoDB...', err);
   });
-
-  io.on('connection', (socket) => {
-    socket.on('createPhoto', (photo) => {
-      io.emit('photoCreated', photo);
-    });
-  
-    socket.on('likeAdded', (like) => {
-      io.emit('likeAdded', like);
-    });
-  
-    socket.on('likeRemoved', (like) => {
-      io.emit('likeRemoved', like);
-    });
-  
-    socket.on('commentAdded', (comment) => {
-      io.emit('commentAdded', comment);
-    });
-  
-    socket.on('disconnect', () => {
-      console.log('Client disconnected');
-    });
-  });
-  
