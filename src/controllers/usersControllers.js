@@ -34,6 +34,7 @@ exports.getUser = async (req, res) => {
       email: user.email,
       prenom: user.prenom,
       nom: user.nom,
+      role: user.role 
     });
   } catch (error) {
     console.error('Server error:', error);

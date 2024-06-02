@@ -14,7 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:5001", "https://sarargentique.cluster-ig3.igpolytech.fr", "http://localhost:5000", "https://sarargentique2.cluster-ig3.igpolytech.fr"],
+    origin: ["http://localhost:3001", "https://sarargentique.cluster-ig3.igpolytech.fr", "http://localhost:3000", "https://sarargentique2.cluster-ig3.igpolytech.fr"],
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -22,7 +22,7 @@ const io = socketIo(server, {
 
 // Configuration CORS pour Express
 const corsOptions = {
-  origin: process.env.CORS_ORIGINS?.split(',') || ["http://localhost:5001", "http://localhost:5000", "https://sarargentique2.cluster-ig3.igpolytech.fr"], // Split a comma-separated list from the environment variable
+  origin: process.env.CORS_ORIGINS?.split(',') || ["http://localhost:3001", "http://localhost:3000", "https://sarargentique2.cluster-ig3.igpolytech.fr"], // Split a comma-separated list from the environment variable
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
